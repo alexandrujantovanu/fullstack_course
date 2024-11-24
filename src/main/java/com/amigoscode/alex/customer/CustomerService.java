@@ -34,7 +34,7 @@ public class CustomerService {
         if (customerDao.existsCustomerWithEmail(email)) {
             throw new DuplicateResourceException("email already taken");
         }
-        customerDao.addCustomer(new Customer(customerRegistrationRequest.name(),
+        customerDao.insertCustomer(new Customer(customerRegistrationRequest.name(),
                 customerRegistrationRequest.email(),
                 customerRegistrationRequest.age())
         );
@@ -70,7 +70,7 @@ public class CustomerService {
                 customer.get().setAge(customerUpdateRequest.age());
             }
             if (changePresent) {
-                customerDao.updateCustomer(customerId, customer.get());
+                customerDao.updateCustomer(customer.get());
             } else {
                 throw new NoDataChangesFoundResources("no data changes found");
             }

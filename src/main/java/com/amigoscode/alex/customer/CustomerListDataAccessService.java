@@ -30,7 +30,7 @@ public class CustomerListDataAccessService implements CustomerDao {
     }
 
     @Override
-    public void addCustomer(Customer customer) {
+    public void insertCustomer(Customer customer) {
         customers.add(customer);
     }
 
@@ -45,8 +45,8 @@ public class CustomerListDataAccessService implements CustomerDao {
     }
 
     @Override
-    public void updateCustomer(Integer id, Customer customer) {
-        Optional<Customer> oldCustomer = customers.stream().filter(cust -> id.equals(cust.getId())).findAny();
+    public void updateCustomer(Customer customer) {
+        Optional<Customer> oldCustomer = customers.stream().filter(cust -> customer.getId().equals(cust.getId())).findAny();
         if (oldCustomer.isPresent()) {
             oldCustomer.get().setName(customer.getName());
             oldCustomer.get().setEmail(customer.getEmail());
