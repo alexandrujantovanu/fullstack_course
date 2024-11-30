@@ -42,19 +42,19 @@ public class CustomerJDBCDataAccessService implements CustomerDao {
     @Override
     public Optional<Customer> selectCustomerByEmail(String email) {
         return jdbcTemplate.query("""
-                        select id, name, email, age
-                        from customer
-                        where email = ?
+                        SELECT id, name, email, age
+                        FROM customer
+                        WHERE email = ?
                         """, customerRowMapper, email)
                 .stream()
                 .findFirst();
     }
 
     @Override
-    public void addCustomer(Customer customer) {
+    public void insertCustomer(Customer customer) {
         int update = jdbcTemplate.update("""
-                insert into customer(name, email, age)
-                values(?, ?, ?);
+                INSERT INTO customer(name, email, age)
+                VALUES(?, ?, ?);
                 """, customer.getName(), customer.getEmail(), customer.getAge());
         System.out.println("jdbcTemplate.update = " + update);
     }
@@ -65,7 +65,7 @@ public class CustomerJDBCDataAccessService implements CustomerDao {
                 SELECT count(id) FROM customer WHERE email=?
                 """;
         Integer count = jdbcTemplate.queryForObject(query, Integer.class, email);
-        return count != null && count > 1;
+        return count != null && count > 0;
     }
 
     @Override
@@ -79,8 +79,8 @@ public class CustomerJDBCDataAccessService implements CustomerDao {
     }
 
     @Override
-    public void updateCustomer(Integer id, Customer customer) {
-        Optional<Customer> existingCustomer = selectCustomerById(id);
+    public void updateCustomer(Customer customer) {
+        Optional<Customer> existingCustomer = selectCustomerById(customer.getId().intValue());
         if (existingCustomer.isEmpty()) {
             return;
         }
@@ -91,6 +91,6 @@ public class CustomerJDBCDataAccessService implements CustomerDao {
                 SET name=?, email=?, age=?
                 WHERE id=?
                 """;
-        jdbcTemplate.update(query, customer.getName(), customer.getEmail(), customer.getAge(), id);
+        jdbcTemplate.update(query, customer.getName(), customer.getEmail(), customer.getAge(), customer.getId().intValue());
     }
 }
