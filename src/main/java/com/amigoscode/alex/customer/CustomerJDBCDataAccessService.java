@@ -29,7 +29,7 @@ public class CustomerJDBCDataAccessService implements CustomerDao {
     }
 
     @Override
-    public Optional<Customer> selectCustomerById(Integer id) {
+    public Optional<Customer> selectCustomerById(Long id) {
         return jdbcTemplate.query("""
                         select id, name, email, age
                         from customer
@@ -69,7 +69,7 @@ public class CustomerJDBCDataAccessService implements CustomerDao {
     }
 
     @Override
-    public void deleteCustomerById(Integer id) {
+    public void deleteCustomerById(Long id) {
         String query = """
                 DELETE
                 FROM customer
@@ -80,7 +80,7 @@ public class CustomerJDBCDataAccessService implements CustomerDao {
 
     @Override
     public void updateCustomer(Customer customer) {
-        Optional<Customer> existingCustomer = selectCustomerById(customer.getId().intValue());
+        Optional<Customer> existingCustomer = selectCustomerById(customer.getId());
         if (existingCustomer.isEmpty()) {
             return;
         }

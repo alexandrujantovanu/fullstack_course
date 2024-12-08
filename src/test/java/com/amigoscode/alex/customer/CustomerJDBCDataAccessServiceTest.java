@@ -45,14 +45,14 @@ class CustomerJDBCDataAccessServiceTest extends AbstractTestContainers {
                 20);
         underTest.insertCustomer(customer);
 
-        Long id = underTest.selectAllCustomers().stream()
+        var id = underTest.selectAllCustomers().stream()
                 .filter(c -> email.equals(c.getEmail()))
                 .map(Customer::getId)
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
 
         //when
-        Optional<Customer> actual = underTest.selectCustomerById(id.intValue());
+        Optional<Customer> actual = underTest.selectCustomerById(id);
 
 
         //then
@@ -68,7 +68,7 @@ class CustomerJDBCDataAccessServiceTest extends AbstractTestContainers {
     @Test
     void selectCustomerByIdWillReturnEmptyWhenCustomerWithIdNotPresent() {
         //given
-        int id = -1;
+        long id = -1;
 
         //when
         Optional<Customer> actual = underTest.selectCustomerById(id);
@@ -170,7 +170,7 @@ class CustomerJDBCDataAccessServiceTest extends AbstractTestContainers {
                 20);
         underTest.insertCustomer(newCustomer);
 
-        Long id = underTest.selectAllCustomers()
+        long id = underTest.selectAllCustomers()
                 .stream()
                 .filter(c -> c.getEmail().equals(newCustomer.getEmail()))
                 .map(Customer::getId)
@@ -178,7 +178,7 @@ class CustomerJDBCDataAccessServiceTest extends AbstractTestContainers {
                 .orElseThrow();
 
         //when
-        underTest.deleteCustomerById(id.intValue());
+        underTest.deleteCustomerById(id);
 
         //then
         Optional<Customer> deletedCustomer = underTest.selectCustomerByEmail(email);
@@ -190,7 +190,7 @@ class CustomerJDBCDataAccessServiceTest extends AbstractTestContainers {
         //given
 
         //when
-        underTest.deleteCustomerById(-1);
+        underTest.deleteCustomerById(-1L);
 
         //then
     }

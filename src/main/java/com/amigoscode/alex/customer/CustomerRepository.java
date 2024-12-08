@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface CustomerRepository extends JpaRepository<Customer, Integer> {
+public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
     boolean existsByEmail(String email);
 
@@ -18,6 +18,6 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
 
     @Transactional
     @Modifying
-    @Query("UPDATE Customer c set c.name = :name, c.email = :email, c.age = :age where c.id = :id")
-    void updateCustomerById(@Param("name") String name, @Param("email") String email, @Param("age") int age, @Param("id") int id);
+    @Query("UPDATE Customer c SET c.name = :name, c.email = :email, c.age = :age WHERE c.id = :id")
+    void updateCustomerById(@Param("id") Long id, @Param("name") String name, @Param("email") String email, @Param("age") int age);
 }

@@ -14,7 +14,7 @@ import java.util.Optional;
 public class CustomerService {
     private final CustomerDao customerDao;
 
-    public CustomerService(@Qualifier("jdbc") CustomerDao customerDao) {
+    public CustomerService(@Qualifier("jpa") CustomerDao customerDao) {
         this.customerDao = customerDao;
     }
 
@@ -22,7 +22,7 @@ public class CustomerService {
         return customerDao.selectAllCustomers();
     }
 
-    public Customer getCustomer(Integer id) {
+    public Customer getCustomer(Long id) {
         return customerDao.selectCustomerById(id)
                 .orElseThrow(() ->
                         new IllegalArgumentException("customer with id " + id + " was not found"));
@@ -40,7 +40,7 @@ public class CustomerService {
         );
     }
 
-    public void deleteCustomerById(int id) {
+    public void deleteCustomerById(Long id) {
         try {
             customerDao.deleteCustomerById(id);
         } catch (RuntimeException ex) {
@@ -48,7 +48,7 @@ public class CustomerService {
         }
     }
 
-    public void updateCustomerById(Integer customerId, CustomerUpdateRequest customerUpdateRequest) {
+    public void updateCustomerById(Long customerId, CustomerUpdateRequest customerUpdateRequest) {
         Optional<Customer> customer = customerDao.selectCustomerById(customerId);
         if (customer.isPresent() && null != customerUpdateRequest) {
             boolean changePresent = false;

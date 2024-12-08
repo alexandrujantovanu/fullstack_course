@@ -24,7 +24,7 @@ public class CustomerListDataAccessService implements CustomerDao {
     }
 
     @Override
-    public Optional<Customer> selectCustomerById(Integer id) {
+    public Optional<Customer> selectCustomerById(Long id) {
         return customers.stream().filter(customer -> id.equals(customer.getId()))
                 .findFirst();
     }
@@ -40,7 +40,7 @@ public class CustomerListDataAccessService implements CustomerDao {
     }
 
     @Override
-    public void deleteCustomerById(Integer id) {
+    public void deleteCustomerById(Long id) {
         customers.removeIf(customer -> id.equals(customer.getId()));
     }
 
