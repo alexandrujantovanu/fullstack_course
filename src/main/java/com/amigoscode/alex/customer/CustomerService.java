@@ -4,6 +4,7 @@ import ch.qos.logback.core.util.StringUtil;
 import com.amigoscode.alex.customer.exception.DuplicateResourceException;
 import com.amigoscode.alex.customer.exception.NoDataChangesFoundResources;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 
@@ -25,7 +26,7 @@ public class CustomerService {
     public Customer getCustomer(Long id) {
         return customerDao.selectCustomerById(id)
                 .orElseThrow(() ->
-                        new IllegalArgumentException("customer with id " + id + " was not found"));
+                        new ResourceNotFoundException("customer with id " + id + " was not found"));
     }
 
     public void addCustomer(CustomerRegistrationRequest
@@ -49,33 +50,32 @@ public class CustomerService {
     }
 
     public void updateCustomerById(Long customerId, CustomerUpdateRequest customerUpdateRequest) {
-        Optional<Customer> customer = customerDao.selectCustomerById(customerId);
-        if (customer.isPresent() && null != customerUpdateRequest) {
+        Customer customer = getCustomer(customerId);
+
+        if (null != customerUpdateRequest) {
             boolean changePresent = false;
-            if (!StringUtil.isNullOrEmpty(customerUpdateRequest.email()) && !customer.get().getEmail().equals(customerUpdateRequest.email())) {
+            if (!StringUtil.isNullOrEmpty(customerUpdateRequest.email()) && !customer.getEmail().equals(customerUpdateRequest.email())) {
                 Optional<Customer> existingCustomerWithEmail = customerDao.selectCustomerByEmail(customerUpdateRequest.email());
                 if (existingCustomerWithEmail.isPresent() && !existingCustomerWithEmail.get().getId().equals(customerId)) {
                     throw new DuplicateResourceException("email is already used");
                 }
 
                 changePresent = true;
-                customer.get().setEmail(customerUpdateRequest.email());
+                customer.setEmail(customerUpdateRequest.email());
             }
-            if (!StringUtil.isNullOrEmpty(customerUpdateRequest.name()) && !customer.get().getName().equals(customerUpdateRequest.name())) {
+            if (!StringUtil.isNullOrEmpty(customerUpdateRequest.name()) && !customer.getName().equals(customerUpdateRequest.name())) {
                 changePresent = true;
-                customer.get().setName(customerUpdateRequest.name());
+                customer.setName(customerUpdateRequest.name());
             }
-            if (null != customerUpdateRequest.age() && !customer.get().getAge().equals(customerUpdateRequest.age())) {
+            if (null != customerUpdateRequest.age() && !customer.getAge().equals(customerUpdateRequest.age())) {
                 changePresent = true;
-                customer.get().setAge(customerUpdateRequest.age());
+                customer.setAge(customerUpdateRequest.age());
             }
             if (changePresent) {
-                customerDao.updateCustomer(customer.get());
+                customerDao.updateCustomer(customer);
             } else {
                 throw new NoDataChangesFoundResources("no data changes found");
             }
-        } else {
-            throw new ResourceAccessException("customer with id " + customerId + " was not found");
         }
     }
 }
