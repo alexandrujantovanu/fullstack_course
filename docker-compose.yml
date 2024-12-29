@@ -11,11 +11,25 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - postgres
+      - db
     restart: unless-stopped
+  jantao-api:
+    container_name: jantao-api
+    image: alexandrujantovanu/jantao-api
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/fullstackdb
+    ports:
+      - "8088:8080"
+    networks:
+      - db
+    depends_on:
+      - db
+    restart: unless-stopped
+#    command:
+#      - --spring.datasource.url=jdbc:postgresql://db:5432/fullstackdb
   pgadmin:
     container_name: pgadmin
-    image: page/pgadmin4
+    image: dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
@@ -25,13 +39,13 @@ services:
     ports:
       - "5050:80"
     networks:
-      - postgres
+      - db
     restart: unless-stopped
     depends_on:
       - db
 
 networks:
-  postgres:
+  db:
     driver: bridge
 
 volumes:
